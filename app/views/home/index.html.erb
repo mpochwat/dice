@@ -36,11 +36,13 @@
 				<!-- Nav -->
 					<nav id="nav">
 						<ul>
-							<li><a href="#intro">Intro</a></li>
-							<li><a href="#one">What I Do</a></li>
-							<li><a href="#two">Who I Am</a></li>
-							<li><a href="#work">My Work</a></li>
-							<li><a href="#contact">Contact</a></li>
+							<% if !user_signed_in? %>
+							<li><a href="#contact">Sign Up</a></li>
+							<li><a href="/users/sign_in">Sign In</a></li>
+							<% else %>
+							<li><a href="/chat/chat_page">Start Chatting</a></li>
+							<li><b>Welcome</b> <%= current_user.email %></li>
+							<% end %>
 						</ul>
 					</nav>
 
@@ -119,29 +121,68 @@
 		<!-- Contact -->
 			<section id="contact" class="main style3 secondary">
 				<div class="content container">
-					<header>
-						<h2>Say Hello.</h2>
-						<p>Lorem ipsum dolor sit amet et sapien sed elementum egestas dolore condimentum.</p>
-					</header>
+					<% if !user_signed_in? %>
+						<header>
+							<h2>Sign Up</h2>
+						</header>
+					<% else %>
+						<header>
+						    Signed in as <%= current_user.email %>. Not you?
+						    <%= link_to "Sign out", destroy_user_session_path, :method => :delete %>
+						</header>
+					<% end %>
+
 					<div class="box container 75%">
 					
 					<!-- Contact Form -->
-							<form method="post" action="#">
-								<div class="row 50%">
-									<div class="6u"><input type="text" name="name" placeholder="Name" /></div>
-									<div class="6u"><input type="email" name="email" placeholder="Email" /></div>
+
+						
+						  <% if !user_signed_in? %>
+						    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+							  <%= devise_error_messages! %>
+
+							  <div class="row 50%">
+
+							  	<div class="3u">
+							  	</div>
+							  	<div class="6u">
+								    <%= f.label :university_email %><br />
+								    <%= f.email_field :email, autofocus: true, :placeholder => 'University Email', :style => "text-align:center;" %>
 								</div>
-								<div class="row 50%">
-									<div class="12u"><textarea name="message" placeholder="Message" rows="6"></textarea></div>
-								</div>
-								<div class="row">
-									<div class="12u">
-										<ul class="actions">
-											<li><input type="submit" value="Send Message" /></li>
-										</ul>
-									</div>
-								</div>
-							</form>
+								<div class="3u">
+							  	</div>
+
+								<div class="6u">
+								    <%= f.label :password %>
+								    <% if @validatable %>
+								    <em>(<%= @minimum_password_length %> characters minimum)</em>
+								    <% end %><br />
+								    <%= f.password_field :password, autocomplete: "off" %>
+								 </div>
+
+								  <div class="6u">
+								    <%= f.label :password_confirmation %><br />
+								    <%= f.password_field :password_confirmation, autocomplete: "off" %>
+								  </div>
+
+								  <div>
+								  	<% f.label :anonymous %><br />
+								  	<% f.text_field :anonymous, :value => "Anonymous" %>
+								  </div>
+
+								 <div class="5u">
+							  	 </div>
+								  <div class="row">
+								  	<div class="4u">
+								  		<ul class="actions">
+								   			<%= f.submit "Sign up" %>
+								   		</ul>
+								  	</div>
+								  </div>
+								<div class="3u">
+							  	</div>
+							<% end %>
+							<% end %>
 
 					</div>
 				</div>
